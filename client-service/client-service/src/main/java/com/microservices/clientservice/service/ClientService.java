@@ -1,7 +1,9 @@
 package com.microservices.clientservice.service;
 
+import com.microservices.clientservice.dto.CardDTO;
 import com.microservices.clientservice.dto.ClientDTO;
 import com.microservices.clientservice.entity.Client;
+import com.microservices.clientservice.feignclients.CardFeignClient;
 import com.microservices.clientservice.model.Card;
 import com.microservices.clientservice.repository.ClientRepository;
 import com.microservices.clientservice.utils.helpers.MHelpers;
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Service;
 import com.microservices.clientservice.utils.hash.BCrypt;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +26,9 @@ public class ClientService {
 
     @Autowired
     private RestTemplate restTemplate;
+
+    @Autowired
+    private CardFeignClient feignClient;
 
     public List<ClientDTO> getAllClients(){
         List<Client> clients = repository.findAll();
@@ -63,9 +70,24 @@ public class ClientService {
             repository.delete(client);
     }
 
-    public List<Card> getCards(String id){
-        List<Card> cards = restTemplate.getForObject("http://localhost:9081/cards/" + id, List.class);
+    public List<CardDTO> getCards(String id){
+        List<CardDTO> cards = feignClient.getCardsFromClient(id);
         return cards;
+    }
+
+    public CardDTO saveCard(String clientId, Card card){
+        card.setClientId(clientId);
+        CardDTO newCard = feignClient.saveCard(card);
+        return newCard;
+    }
+
+    public Map<String, Object> getClientCards(ClientDTO client){
+        Map<String, Object> result = new HashMap<>();
+        result.put("Client", client);
+        List<CardDTO> cards = feignClient.getCardsFromClient(client.getId());
+        result.put("Cards", cards);
+
+        return result;
     }
 
     private ClientDTO parseToClientDTO(Client client) {

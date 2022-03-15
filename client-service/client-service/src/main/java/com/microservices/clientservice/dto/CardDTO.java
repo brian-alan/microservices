@@ -1,4 +1,4 @@
-package com.microservices.clientservice.model;
+package com.microservices.clientservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Card {
+public class CardDTO {
 
     private String cardNumber;
     private String expiryDate;
-    private String cvv;
     private String clientId;
 
 }
