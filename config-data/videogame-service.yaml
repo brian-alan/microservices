@@ -9,6 +9,8 @@ spring:
       database: videogame
       port: 27017
       host: localhost
+  application:
+    zipkin: http://localhost:9411
 eureka:
   client:
     fetch-registry: true
