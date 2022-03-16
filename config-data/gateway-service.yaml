@@ -1,0 +1,30 @@
+server:
+  port: 9000
+eureka:
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      default-zone: http://localhost:8761/eureka
+  instance:
+    hostname: localhost
+
+spring:
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      routes:
+        - id: client-service
+          uri: lb://client-service
+          predicates:
+            - Path=/clients/**
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/cards/**
+        - id: client-service
+          uri: lb://videogame-service
+          predicates:
+            - Path=/videogames/**
