@@ -7,7 +7,9 @@ import com.microservices.clientservice.model.Card;
 import com.microservices.clientservice.utils.exceptions.ClientUnprocessableEntity;
 import com.microservices.clientservice.service.ClientService;
 import com.microservices.clientservice.validator.ClientValidator;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +41,7 @@ public class ClientController {
         return ResponseEntity.ok(client);
     }
 
+    @CircuitBreaker(name = "paymentsCB", fallbackMethod = "fallBackGetClientCards")
     @GetMapping(value = "cards/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CardDTO>> getClientCards(@PathVariable(value = "id") String id){
         ClientDTO client = service.getClientById(id);
@@ -48,6 +51,7 @@ public class ClientController {
         return ResponseEntity.ok(cards);
     }
 
+    @CircuitBreaker(name = "allCB", fallbackMethod = "fallBackGetAllDataFromClient")
     @GetMapping(value = "getAll/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> getAllDataFromClient(@PathVariable(value = "id") String id){
         ClientDTO client = service.getClientById(id);
@@ -64,6 +68,7 @@ public class ClientController {
         return ResponseEntity.ok(newClient);
     }
 
+    @CircuitBreaker(name = "paymentsCB", fallbackMethod = "fallBackSaveClientCard")
     @PostMapping(value = "cards/{clientId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<CardDTO> saveClientCard(@PathVariable(value = "clientId") String clientId,
                                                   @RequestBody Card card){
@@ -84,5 +89,21 @@ public class ClientController {
     public ResponseEntity deleteClient(@PathVariable(value = "id") String id){
         service.deleteClient(id);
         return ResponseEntity.ok().build();
+    }
+
+    private ResponseEntity<List<CardDTO>> fallBackGetClientCards(@PathVariable(value = "id") String id, RuntimeException e){
+        return new ResponseEntity("Can't get cards. Cards server under maintenance, sorry for the inconveniance.",
+                HttpStatus.OK);
+    }
+
+    private ResponseEntity<Map<String, Object>> fallBackGetAllDataFromClient(@PathVariable(value = "id") String id, RuntimeException e){
+        return new ResponseEntity("All servers under maintenance, sorry for the inconveniance.", HttpStatus.OK);
+    }
+
+    private ResponseEntity<CardDTO> fallBackSaveClientCard(@PathVariable(value = "clientId") String clientId,
+                                                           @RequestBody Card card,
+                                                           RuntimeException e){
+        return new ResponseEntity("Can't save cards. Cards server under maintenance, sorry for the inconveniance.",
+                HttpStatus.OK);
     }
 }
