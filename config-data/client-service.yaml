@@ -1,0 +1,11 @@
+server:
+  port: 9080
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      username: rootuser
+      password: pass123
+      database: client
+      port: 27017
+      host: localhost
