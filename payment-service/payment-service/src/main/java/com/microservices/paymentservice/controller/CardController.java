@@ -3,6 +3,8 @@ package com.microservices.paymentservice.controller;
 import com.microservices.paymentservice.dto.CardDTO;
 import com.microservices.paymentservice.entity.Card;
 import com.microservices.paymentservice.service.CardService;
+import com.microservices.paymentservice.utils.exceptions.CardUnprocessableEntity;
+import com.microservices.paymentservice.validator.CardValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class CardController {
     @Autowired
     private CardService service;
 
+    @Autowired
+    private CardValidator validator;
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<CardDTO>> getAll(){
         List<CardDTO> cards = service.getAllCards();
@@ -30,7 +35,8 @@ public class CardController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<CardDTO> saveCard(@RequestBody Card card){
+    public ResponseEntity<CardDTO> saveCard(@RequestBody Card card) throws CardUnprocessableEntity {
+        validator.cardValidator(card);
         CardDTO newCard = service.saveCard(card);
         return ResponseEntity.ok(newCard);
     }

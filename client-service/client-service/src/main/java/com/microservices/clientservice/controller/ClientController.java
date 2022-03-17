@@ -102,8 +102,8 @@ public class ClientController {
 
     private ResponseEntity<CardDTO> fallBackSaveClientCard(@PathVariable(value = "clientId") String clientId,
                                                            @RequestBody Card card,
-                                                           RuntimeException e){
-        return new ResponseEntity("Can't save cards. Cards server under maintenance, sorry for the inconveniance.",
+                                                           Exception e){
+        return new ResponseEntity("Can't save cards. Cards server under maintenance, sorry for the inconveniance. " + e.getLocalizedMessage(),
                 HttpStatus.OK);
     }
 }
