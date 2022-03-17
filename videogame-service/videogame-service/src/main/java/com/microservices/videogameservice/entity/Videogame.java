@@ -3,20 +3,19 @@ package com.microservices.videogameservice.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.io.Serializable;
 
 @Data
-@Table(name = "videogames")
+@Document
 @AllArgsConstructor
 @NoArgsConstructor
-public class Videogame {
+public class Videogame{
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private String id;
     private String name;
     private String console;
     private double price;

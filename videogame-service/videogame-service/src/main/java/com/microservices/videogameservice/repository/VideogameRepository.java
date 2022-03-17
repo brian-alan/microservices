@@ -1,9 +1,7 @@
 package com.microservices.videogameservice.repository;
 
 import com.microservices.videogameservice.entity.Videogame;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-@Repository
-public interface VideogameRepository extends JpaRepository<Videogame, Integer> {
+public interface VideogameRepository extends MongoRepository<Videogame, String> {
 }
