@@ -28,4 +28,3 @@ spring:
           uri: lb://videogame-service
           predicates:
             - Path=/videogames/**
-            - Path=/purchase/**
