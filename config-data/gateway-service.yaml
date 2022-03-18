@@ -24,7 +24,8 @@ spring:
           uri: lb://payment-service
           predicates:
             - Path=/cards/**
-        - id: client-service
+        - id: videogame-service
           uri: lb://videogame-service
           predicates:
             - Path=/videogames/**
+            - Path=/purchase/**

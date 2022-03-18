@@ -103,7 +103,18 @@ public class ClientController {
     private ResponseEntity<CardDTO> fallBackSaveClientCard(@PathVariable(value = "clientId") String clientId,
                                                            @RequestBody Card card,
                                                            Exception e){
-        return new ResponseEntity("Can't save cards. Cards server under maintenance, sorry for the inconveniance. " + e.getLocalizedMessage(),
-                HttpStatus.OK);
+        String message = "";
+        int errorCode = Integer.parseInt(e.getMessage().substring(1,4));
+        HttpStatus status = HttpStatus.OK;
+        if(errorCode == HttpStatus.SERVICE_UNAVAILABLE.value()){
+            //Comprueba si el codigo de error tiene un valor de 503
+            message = "Can't save card, card server under maintenance";
+        }
+        if (errorCode == HttpStatus.UNPROCESSABLE_ENTITY.value()){
+            //Comprueba si el codigo de error tiene un valor de 422, como el que se arroja dentro del microservicio
+            message = "Can't save card due to error processing information";
+            status = HttpStatus.UNPROCESSABLE_ENTITY;
+        }
+        return new ResponseEntity(message, status);
     }
 }
